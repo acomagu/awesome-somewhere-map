@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Awesome Somewhere Map</title>
+    <meta charset="utf-8" />
+    <style>
+.map {
+  height: 500px;
+  width: 500px;
+}
+    </style>
+  </head>
+  <body>
+   <div class="map"></div>
+    <script>
+      function b64DecodeUnicode(str) {
+        // Going backwards: from bytestream, to percent-encoding, to original string.
+        return decodeURIComponent(atob(str).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+      }
+      var map;
+      function initMap() {
+        fetch('https://api.github.com/repos/acomagu/awesome-takadanobaba/contents/src/restaurants.toml')
+          .then((res) =>
+            res.json()
+          ).then((body) => {
+            console.log(b64DecodeUnicode(body.content));
+          });
+
+        map = new google.maps.Map(document.querySelector('.map'), {
+          zoom: 16,
+          center: new google.maps.LatLng(-33.91722, 151.23064),
+          mapTypeId: 'roadmap'
+        });
+
+        var features = [
+          {
+            position: new google.maps.LatLng(-33.91721, 151.22630),
+            type: 'info'
+          }, {
+            position: new google.maps.LatLng(-33.91539, 151.22820),
+            type: 'info'
+          }, {
+            position: new google.maps.LatLng(-33.91747, 151.22912),
+            type: 'info'
+          },
+        ];
+
+        // Create markers.
+        features.forEach(function(feature) {
+          var marker = new google.maps.Marker({
+            position: feature.position,
+            map: map
+          });
+        });
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBWK1J7VSPGuq9g45Q0i3F2xHctcBYT8Ms&callback=initMap">
+    </script>
